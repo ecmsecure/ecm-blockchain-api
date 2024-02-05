@@ -8,15 +8,15 @@ module ECMBlockchain
     
     HTTP_VERBS = %i(post get delete patch)
 
-    private
-
     def request(method, url, data=nil)
       ECMBlockchain.has_api_key?
       check_http_verb(method)
       response = api_client_call(method, url, data)
-      raise ECMBlockchain::Error.from_response(response) unless response.success?
+      raise ECMBlockchain::Error.raise_error(response) unless response.success?
       JSON.parse(response.body).deep_symbolize_keys if response.body
     end
+
+    private
 
     def api_client_call(verb, url, data)
       args = [ verb, ECMBlockchain.base_url + url ]
@@ -29,8 +29,9 @@ module ECMBlockchain
 
     def check_http_verb(verb)
       unless HTTP_VERBS.include?(verb)
-        raise BadRequestError, 
-          "HTTP Verb needs to be one of the following: #{ HTTP_VERBS }"
+        raise BadRequest, 
+          message: "HTTP Verb needs to be one of the following: #{ HTTP_VERBS }",
+          code: 400
       end
     end
 

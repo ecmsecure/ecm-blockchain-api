@@ -12,19 +12,23 @@ require_relative "ecm_blockchain_api/models/data_content_model"
 require_relative "ecm_blockchain_api/models/custom_attribute"
 require          "httparty"
 require          "logger"
-# require          "pry"
 require          "active_model"
 
 require  "ecm_blockchain_api/ca"
 require  "ecm_blockchain_api/asset"
 
 module ECMBlockchain
+  require "pry"
+
   class << self
     attr_accessor :access_token, :logger, :base_url
     
     def has_api_key?
       return unless ECMBlockchain.access_token.to_s.empty?
-      raise AuthenticationError, "You need to set your access_token"
+      raise Unauthorized, 
+        message: "You need to set your access_token", 
+        code: 401,
+        name: Unauthorized  
     end
   end
 

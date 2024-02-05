@@ -7,7 +7,7 @@ module ECMBlockchain
     attr_accessor :uuid, :organisation, :custom_attributes, :certificate
 
     validates :uuid, presence: true
-    validates :organisation, presence: true
+    validates :organisation, :certificate, presence: true
 
     def initialize(data={})
       @uuid = data.fetch(:uuid)

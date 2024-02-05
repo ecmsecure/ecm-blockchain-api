@@ -1,4 +1,4 @@
-module AssetHelper
+module RequestHelper
   def asset_request_data
     {
       "uuid": "823737e4-bdc4-401a-b309-ef4c4d4f4733",
@@ -93,4 +93,30 @@ module AssetHelper
       test_access_date: "14-09-2009"
     }
   end
-end
+
+  def error_response_object
+      OpenStruct.new(
+        success?: false,
+        body: {
+          error: {
+            message: 'bad request error',
+            statusCode: 400,
+            details: ['error occured']
+          }
+        }.to_json,
+        code: 400
+      )
+  end
+
+  def success_response_object
+      OpenStruct.new(
+        success?: true,
+        body: {
+          success: {
+            message: 'success message',
+          }
+        }.to_json,
+        code: 201
+      )
+  end
+ end

@@ -6,14 +6,14 @@ require 'factory_bot'
 require 'shoulda-matchers'
 require "active_support"
 require 'shoulda/matchers'
-require './spec/support/helpers/asset_helper'
+require './spec/support/helpers/request_helper'
 WebMock.disable_net_connect!
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
   config.example_status_persistence_file_path = ".rspec_status"
   config.include FactoryBot::Syntax::Methods
-  config.include AssetHelper
+  config.include RequestHelper
 
   # Disable RSpec exposing methods globally on `Module` and `main`
   config.disable_monkey_patching!
@@ -28,6 +28,10 @@ RSpec.configure do |config|
 
   config.before(:each) do
     ECMBlockchain.access_token = "abc123"
+  end
+
+  config.before(:each) do
+    stub_request(:any, /api.ecmsecure.com/).to_return(body: '{}')
   end
 end
 

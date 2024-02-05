@@ -36,7 +36,7 @@ RSpec.describe ECMBlockchain do
   describe '#has_api_key?' do
     it 'should raise an Authentication error if no API key' do
       ECMBlockchain.access_token = ''
-      expect{ ECMBlockchain.has_api_key? }.to raise_error(ECMBlockchain::AuthenticationError)
+      expect{ ECMBlockchain.has_api_key? }.to raise_error(ECMBlockchain::Unauthorized)
     end
   end
 end

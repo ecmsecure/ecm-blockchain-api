@@ -1,51 +1,16 @@
 module ECMBlockchain
   class Error < StandardError
-    attr_reader :code, :details
+    attr_reader :code, :details, :name
 
-    ClientError = Class.new(self)
-
-    BadRequest = Class.new(ClientError)
-    Unauthorized = Class.new(ClientError)
-    PaymentRequired = Class.new(ClientError)
-    Forbidden = Class.new(ClientError)
-    RequestEntityTooLarge = Class.new(ClientError)
-    NotFound = Class.new(ClientError)
-    NotAcceptable = Class.new(ClientError)
-    UnprocessableEntity = Class.new(ClientError)
-    TooManyRequests = Class.new(ClientError)
-
-    ServerError = Class.new(self)
-    InternalServerError = Class.new(ServerError)
-    BadGateway = Class.new(ServerError)
-    ServiceUnavailable = Class.new(ServerError)
-    GatewayTimeout = Class.new(ServerError)
-
-    TimeoutError = Class.new(self)
-
-    ERRORS = {
-      400 => ECMBlockchain::Error::BadRequest,
-      401 => ECMBlockchain::Error::Unauthorized,
-      402 => ECMBlockchain::Error::PaymentRequired,
-      403 => ECMBlockchain::Error::Forbidden,
-      404 => ECMBlockchain::Error::NotFound,
-      406 => ECMBlockchain::Error::NotAcceptable,
-      413 => ECMBlockchain::Error::RequestEntityTooLarge,
-      422 => ECMBlockchain::Error::UnprocessableEntity,
-      429 => ECMBlockchain::Error::TooManyRequests,
-      500 => ECMBlockchain::Error::InternalServerError,
-      502 => ECMBlockchain::Error::BadGateway,
-      503 => ECMBlockchain::Error::ServiceUnavailable,
-      504 => ECMBlockchain::Error::GatewayTimeout,
-    }.freeze
-
-    class << self
-      # Create a new error from an HTTP response
-      #
-      def from_response(response)
-        klass = ERRORS[response.code] || self
-        err = JSON.parse(response.body).deep_symbolize_keys[:error]
-        klass.new(err[:message], err[:statusCode], err[:details])
-      end
+    def self.raise_error(response)
+      klass = ERROR_CLASS_MAP[response.code] || self
+      err = JSON.parse(response.body).deep_symbolize_keys[:error]
+      raise klass.new(
+        message: err[:message], 
+        code: err[:statusCode], 
+        details: err[:details], 
+        name: klass.to_s
+      )
     end
 
     # Initializes a new Error object
@@ -53,11 +18,45 @@ module ECMBlockchain
     # @param message [Exception, String]
     # @param code [Integer]
     # @return [ECMBlockchain::Error]
-    def initialize(message = "", code = nil, details = nil)
+    def initialize(message: "", code: nil, details: nil, name: nil)
       super(message)
 
       @code = code
       @details = details
+      @name = name
     end
   end
+
+  class BadRequest < ECMBlockchain::Error;end;
+  class Unauthorized < ECMBlockchain::Error; end; 
+  class PaymentRequired < ECMBlockchain::Error; end; 
+  class Forbidden < ECMBlockchain::Error; end; 
+  class RequestEntityTooLarge < ECMBlockchain::Error; end; 
+  class NotFound < ECMBlockchain::Error; end; 
+  class NotAcceptable < ECMBlockchain::Error; end; 
+  class UnprocessableEntity < ECMBlockchain::Error; end; 
+  class TooManyRequests < ECMBlockchain::Error; end; 
+  class ServerError < ECMBlockchain::Error; end; 
+  class InternalServerError < ECMBlockchain::Error; end; 
+  class BadGateway < ECMBlockchain::Error; end; 
+  class ServiceUnavailable < ECMBlockchain::Error; end; 
+  class GatewayTimeout < ECMBlockchain::Error; end; 
+  class TimeoutError < ECMBlockchain::Error; end; 
+
+  ERROR_CLASS_MAP = {
+    400 => ECMBlockchain::BadRequest,
+    401 => ECMBlockchain::Unauthorized,
+    402 => ECMBlockchain::PaymentRequired,
+    403 => ECMBlockchain::Forbidden,
+    404 => ECMBlockchain::NotFound,
+    406 => ECMBlockchain::NotAcceptable,
+    413 => ECMBlockchain::RequestEntityTooLarge,
+    422 => ECMBlockchain::UnprocessableEntity,
+    429 => ECMBlockchain::TooManyRequests,
+    500 => ECMBlockchain::InternalServerError,
+    502 => ECMBlockchain::BadGateway,
+    503 => ECMBlockchain::ServiceUnavailable,
+    504 => ECMBlockchain::GatewayTimeout,
+  }.freeze
+
 end

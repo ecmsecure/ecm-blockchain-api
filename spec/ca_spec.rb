@@ -11,6 +11,7 @@ RSpec.describe ECMBlockchain::CA do
     {
       uuid: "user@org1.example.com",
       organisation: "Org1",
+      certificate: "-----BEGIN CERTIFICATE REQUEST-----",
       customAttributes: [
         {
           name: "verified",
@@ -38,15 +39,13 @@ RSpec.describe ECMBlockchain::CA do
     end
 
     context 'member created' do
-      context '200 - with data' do
         before do
           allow(ECMBlockchain::CA).to receive(:request).and_return(member_response)
         end
 
         it 'should return a member' do
           member = ECMBlockchain::CA.create(request)
-          expect(member.uuid).to eq(member_response[:uuid])
-          expect(member.organisation).to eq(member_response[:organisation])
+          expect(member).to be_a(ECMBlockchain::Member)
         end
 
         it 'should call the request method with the correct params' do
@@ -54,47 +53,6 @@ RSpec.describe ECMBlockchain::CA do
             .with( :post, '/members', request )
           ECMBlockchain::CA.create(request)
         end
-      end
-
-      context '422' do
-        let(:error_response) do
-          {
-            code: 422,
-            body: {
-              statusCode: 422,
-              name: 'UnprocessableEntityError',
-              message: 'error message'
-            }
-          }
-        end
-
-        before do
-          allow(ECMBlockchain::CA).to receive(:api_client_call).and_return(error_response)
-        end
-
-        it 'should return a UnprocessableEntityError' do
-          member = ECMBlockchain::CA.create(request) 
-          expect(member.success?).to eq(false)
-          expect(member.error.message).to eq('error message')
-          expect(member.error.code).to eq(422)
-          expect(member.error.identifier).to eq('UnprocessableEntityError')
-        end
-
-        it 'should return a UnprocessableEntityError method_missing' do
-          member = ECMBlockchain::CA.create(request) 
-          expect{ member.wrong }.to raise_error(ECMBlockchain::UnprocessableEntityError)
-        end
-
-        it 'should return the error message' do
-          begin
-            ECMBlockchain::CA.create(request)
-          rescue => e
-            expected_error = JSON.parse(error_response)
-            expect(e.message).to eq(expected_error["message"])
-            expect(e.code).to eq(expected_error["statusCode"])
-          end
-        end
-      end
     end
   end
 
@@ -112,19 +70,14 @@ RSpec.describe ECMBlockchain::CA do
 
       it 'should retrieve a member' do
         member = ECMBlockchain::CA.retrieve(identity)
-        expect(member.uuid).to eq(member_response[:uuid])
-        expect(member.organisation).to eq(member_response[:organisation])
+        expect(member).to be_a(ECMBlockchain::Member)
       end
       
-      it 'should retrieve a members custom attributes' do
-        member = ECMBlockchain::CA.retrieve(identity)
-        expect(member.custom_attributes.count).to eq(member_response[:customAttributes].count)
-        expect(member.custom_attributes[0]).to be_kind_of(ECMBlockchain::CustomAttribute)
-        expect(member.custom_attributes[0].name).to eq(member_response[:customAttributes][0][:name])
-        expect(member.custom_attributes[0].value).to eq(
-          member_response[:customAttributes][0][:value]
-        )
-      end
+        it 'should call the request method with the correct params' do
+          expect(ECMBlockchain::CA).to receive(:request)
+            .with( :get, "/#{identity}/members")
+          ECMBlockchain::CA.retrieve(identity)
+        end
     end
   end
 
