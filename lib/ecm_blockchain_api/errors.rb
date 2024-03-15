@@ -4,10 +4,12 @@ module ECMBlockchain
 
     def self.raise_error(response)
       klass = ERROR_CLASS_MAP[response.code] || self
-      err = JSON.parse(response.body).deep_symbolize_keys[:error]
+      res = response.body
+      res = '{}' if res == ''
+      err = JSON.parse(res).deep_symbolize_keys[:error]
       raise klass.new(
-        message: err[:message], 
-        code: err[:statusCode], 
+        message: err[:message] || response.headers["status"], 
+        code: err[:statusCode] || response.code, 
         details: err[:details], 
         name: klass.to_s
       )

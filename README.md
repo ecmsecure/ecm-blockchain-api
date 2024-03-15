@@ -70,7 +70,7 @@ ECMBlockchain::CA.delete("user@org1.example.com")
 ```ruby
 # Create an Asset on the blockchain
 @member = ECMBlockchain::Asset.create(
-  "creator_identity:secret',
+  'creator_identity:secret',
   {
     uuid: "823737e4-bdc4-401a-b309-ef4c4d4f4733",
     groupId: "contract-bdc4-401a",
@@ -102,12 +102,22 @@ ECMBlockchain::CA.delete("user@org1.example.com")
 ```
 
 ```ruby
-# Success and errors
+# mint tokens
 
-@member.success?       => true
-@member.error.message  => 'Member not found'
-@member.error.code     => 404
- 
+@tokens = ECMBlockchain::Tokens.create(
+  'creator_identity:secret',
+  {
+    kind: "CarbonCoins",
+    quantity: 100
+  }
+)
+
+# returns ECMBlockchain::TokensCollection
+
+@tokens.first.kind
+@tokens.first.quanitity
+@tokens.first.owner
+@tokens.first.transferee
 ```
 
 ## Development

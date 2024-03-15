@@ -76,6 +76,15 @@ module RequestHelper
     }
   end
 
+  def token_response_data 
+    {
+      kind: "string",
+      quantity: 100,
+      owner: "string",
+      transferee: "string"
+    }
+  end
+
   def file_response_data
     {
       title: "string",

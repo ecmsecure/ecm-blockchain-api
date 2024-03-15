@@ -7,6 +7,8 @@ require_relative "ecm_blockchain_api/request"
 require_relative "ecm_blockchain_api/errors"
 require_relative "ecm_blockchain_api/models/member"
 require_relative "ecm_blockchain_api/models/asset_model"
+require_relative "ecm_blockchain_api/models/token_model"
+require_relative "ecm_blockchain_api/models/token_collection"
 require_relative "ecm_blockchain_api/models/data_file_model"
 require_relative "ecm_blockchain_api/models/data_content_model"
 require_relative "ecm_blockchain_api/models/custom_attribute"
@@ -16,6 +18,7 @@ require          "active_model"
 
 require  "ecm_blockchain_api/ca"
 require  "ecm_blockchain_api/asset"
+require  "ecm_blockchain_api/token"
 
 module ECMBlockchain
   require "pry"

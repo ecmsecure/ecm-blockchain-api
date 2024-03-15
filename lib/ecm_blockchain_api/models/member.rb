@@ -16,7 +16,6 @@ module ECMBlockchain
       @custom_attributes = data[:customAttributes].map do |attr|
         ECMBlockchain::CustomAttribute.new(attr)
       end
-      # raise error unless valid
     end
   end
 end

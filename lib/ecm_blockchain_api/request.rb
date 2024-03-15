@@ -13,7 +13,7 @@ module ECMBlockchain
       check_http_verb(method)
       response = api_client_call(method, url, data)
       raise ECMBlockchain::Error.raise_error(response) unless response.success?
-      JSON.parse(response.body).deep_symbolize_keys if response.body
+      JSON.parse(response.body, symbolize_names: true) if response.body
     end
 
     private
