@@ -29,9 +29,9 @@ module ECMBlockchain
 
     def check_http_verb(verb)
       unless HTTP_VERBS.include?(verb)
-        raise BadRequest, 
+        raise BadRequest.new( 
           message: "HTTP Verb needs to be one of the following: #{ HTTP_VERBS }",
-          code: 400
+          code: 400)
       end
     end
 

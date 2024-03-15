@@ -28,10 +28,10 @@ module ECMBlockchain
     
     def has_api_key?
       return unless ECMBlockchain.access_token.to_s.empty?
-      raise Unauthorized, 
+      raise Unauthorized.new( 
         message: "You need to set your access_token", 
         code: 401,
-        name: Unauthorized  
+        name: Unauthorized)  
     end
   end
 
