@@ -103,13 +103,28 @@ ECMBlockchain::CA.delete("user@org1.example.com")
 
 ```ruby
 # mint tokens
-
 @tokens = ECMBlockchain::Tokens.create(
   'creator_identity:secret',
   {
     kind: "CarbonCoins",
     quantity: 100
   }
+)
+
+# Burn tokens
+@tokens = ECMBlockchain::Tokens.burn(
+  'owner_identity:secret',
+  {
+    kind: "CarbonCoins",
+    quantity: 100
+  }
+)
+
+
+# Retrieve tokens
+@tokens = ECMBlockchain::Tokens.retrieve(
+  'owner_identity:secret',
+  kind # defaults to 'all'
 )
 
 # returns ECMBlockchain::TokensCollection

@@ -8,17 +8,17 @@ module ECMBlockchain
         token(request( :post, "/#{identity}#{TOKENS_URL}/mint", data ))
       end
 
-      def retrieve(identity)
-        token(request( :get, "/#{identity}#{TOKENS_URL}" ))
+      def retrieve(identity, kind='all')
+        token(request( :get, "/#{identity}#{TOKENS_URL}/#{kind}" ))
       end
 
       def update(identity, data)
         token(request( :patch, "/#{identity}#{TOKENS_URL}", data ))
       end
 
-      def revoke(identity)
-        response = request( :delete, "/#{identity}#{TOKENS_URL}")
-        OpenStruct.new(success: true, details: "Certificate successfully revoked")
+      def burn(identity, data)
+        response = request( :delete, "/#{identity}#{TOKENS_URL}/burn", data)
+        OpenStruct.new(success: true, details: "Tokens successfully burnt")
       end
 
       private
