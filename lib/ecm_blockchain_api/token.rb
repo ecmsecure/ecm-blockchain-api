@@ -12,8 +12,8 @@ module ECMBlockchain
         token(request( :get, "/#{identity}#{TOKENS_URL}/#{kind}" ))
       end
 
-      def update(identity, data)
-        token(request( :patch, "/#{identity}#{TOKENS_URL}", data ))
+      def total_supply()
+        token(request( :get, "/#{TOKENS_URL}"))
       end
 
       def burn(identity, data)
