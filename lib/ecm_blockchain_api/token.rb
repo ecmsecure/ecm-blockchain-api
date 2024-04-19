@@ -21,6 +21,11 @@ module ECMBlockchain
         OpenStruct.new(success: true, details: "Tokens successfully burnt")
       end
 
+      def transfer(from, to, data)
+        data[:transferee] = request( :get, "/#{to}#{TOKENS_URL}/wallet")
+        token(request( :patch, "/#{from}#{TOKENS_URL}/transfer", data ))
+      end
+
       private
 
       def token(params)
