@@ -22,7 +22,7 @@ module ECMBlockchain
       end
 
       def transfer(from, to, data)
-        data[:transferee] = request( :get, "/#{to}#{TOKENS_URL}/wallet")
+        data[:transferee] = request( :get, "/#{to}#{TOKENS_URL}/wallet")[:address]
         token(request( :patch, "/#{from}#{TOKENS_URL}/transfer", data ))
       end
 
