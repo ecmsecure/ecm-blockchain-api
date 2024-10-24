@@ -20,7 +20,7 @@ RSpec.describe ECMBlockchain::Tokens do
       quantity: 100
     }
   end
-  let(:identity) { "user@org1.example.com:s3cr3t!" }
+  let(:identity) { "user@org1.example.com" }
 
   describe '#create' do
     before do

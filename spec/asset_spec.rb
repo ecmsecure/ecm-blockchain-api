@@ -16,7 +16,7 @@ RSpec.describe ECMBlockchain::Asset do
   end
 
   describe '#create' do
-    let(:identity) { "user@org1.example.com:s3cr3t!" }
+    let(:identity) { "user@org1.example.com" }
     before do
       stub_request(:post, ECMBlockchain.base_url + "/#{identity}#{assets_url}")
     end
@@ -27,20 +27,20 @@ RSpec.describe ECMBlockchain::Asset do
           allow(ECMBlockchain::Asset).to receive(:request).and_return(asset_response)
         end
 
-        it 'should return an asset' do
+        it 'should create an asset with request data' do
           asset = ECMBlockchain::Asset.create(identity, asset_request)
           expect(asset.uuid).to eq(asset_response[:uuid])
         end
 
         it 'should return an success on an asset' do
           asset = ECMBlockchain::Asset.create(identity, asset_request)
-          expect(asset.success?).to eq(true)
+          expect(asset).to be_a(ECMBlockchain::AssetModel)
         end
 
         it 'should call the request method with the correct params' do
           expect(ECMBlockchain::Asset).to receive(:request)
             .with( :post, "/#{identity}#{assets_url}", asset_request ).and_return(
-              OpenStruct.new(body: asset_response.to_json)
+              asset_response
             )
           ECMBlockchain::Asset.create(identity, asset_request)
         end
@@ -48,101 +48,105 @@ RSpec.describe ECMBlockchain::Asset do
 
       context '422' do
         let(:error_response) do
-          {
-            code: 422,
-            body: {
-              statusCode: 422,
-              name: 'UnprocessableEntityError',
-              message: 'error message'
-            }
-          }
+          error_response_data
         end
 
         before do
-          allow(ECMBlockchain::Asset).to receive(:api_client_call).and_return(error_response)
+          error = instance_double(HTTParty::Response, body: error_response.to_json, code: 422, success?: false)
+          allow(ECMBlockchain::Asset).to receive(:api_client_call).and_return(error)
         end
 
-        it 'should return a UnprocessableEntityError' do
-          asset = ECMBlockchain::Asset.create(identity, asset_request) 
-          expect(asset.success?).to eq(false)
-          expect(asset.error.message).to eq('error message')
-          expect(asset.error.code).to eq(422)
-          expect(asset.error.identifier).to eq('UnprocessableEntityError')
+        it 'should raise an UnprocessableEntity' do
+          expect { ECMBlockchain::Asset.create(identity, asset_request) }.to raise_error(ECMBlockchain::UnprocessableEntityError)
         end
 
         it 'should return the error message' do
-          asset = ECMBlockchain::Asset.create(identity, asset_request) 
-          expect{ asset.wrong }.to raise_error(ECMBlockchain::UnprocessableEntityError)
+          begin
+            ECMBlockchain::Asset.create(identity, asset_request) 
+          rescue ECMBlockchain::UnprocessableEntityError => e
+            expect(e.message).to eq(
+              'The request body is invalid. See error object `details` property for more info.'
+            )
+            expect(e.code).to eq(422)
+          end
         end
+
+        xit 'should raise an error if the response data is invalid' do
+          allow(ECMBlockchain::Asset).to receive(:api_client_call).and_return(
+            instance_double(HTTParty::Response, body: '{}', code: 200, success?: true)
+          )
+          expect { ECMBlockchain::Asset.create(identity, asset_request) }.to raise_error(ECMBlockchain::UnprocessableEntityError)
+        end
+
       end
     end
   end
 
-  describe '#batch_create' do
-    let(:identity) { "user@org1.example.com:s3cr3t!" }
+  # describe '#batch_create' do
+  #   let(:identity) { "user@org1.example.com:s3cr3t!" }
     
-    context 'batch asset created' do
-      before do
-        stub_request(:post, ECMBlockchain.base_url + "/#{identity}#{batch_assets_url}")
-      end
+  #   context 'batch asset created' do
+  #     before do
+  #       stub_request(:post, ECMBlockchain.base_url + "/#{identity}#{batch_assets_url}")
+  #     end
 
-      context '200 - with data' do
-        before do
-          allow(ECMBlockchain::Asset).to receive(:request).and_return([asset_response])
-        end
+  #     context '200 - with data' do
+  #       before do
+  #         allow(ECMBlockchain::Asset).to receive(:request).and_return([asset_response])
+  #       end
 
-        it 'should return the assets' do
-          res = ECMBlockchain::Asset.batch_create(identity, [asset_request])
-          expect(res).to be_a(Array)
-          expect(res.length).to eq(1)
-          expect(res[0].uuid).to eq(asset_response[:uuid])
-        end
+  #       it 'should return the assets' do
+  #         res = ECMBlockchain::Asset.batch_create(identity, [asset_request])
+  #         expect(res).to be_a(Array)
+  #         expect(res.length).to eq(1)
+  #         expect(res[0].uuid).to eq(asset_response[:uuid])
+  #       end
 
-        # it 'should return an success on an asset' do
-        #   asset = ECMBlockchain::Asset.create(identity, asset_request)
-        #   expect(asset.success?).to eq(true)
-        # end
+  #       # it 'should return an success on an asset' do
+  #       #   asset = ECMBlockchain::Asset.create(identity, asset_request)
+  #       #   expect(asset.success?).to eq(true)
+  #       # end
 
-        # it 'should call the request method with the correct params' do
-        #   expect(ECMBlockchain::Asset).to receive(:request)
-        #     .with( :post, "/#{identity}#{assets_url}", asset_request ).and_return(
-        #       OpenStruct.new(body: asset_response.to_json)
-        #     )
-        #   ECMBlockchain::Asset.create(identity, asset_request)
-        # end
-      end
+  #       # it 'should call the request method with the correct params' do
+  #       #   expect(ECMBlockchain::Asset).to receive(:request)
+  #       #     .with( :post, "/#{identity}#{assets_url}", asset_request ).and_return(
+  #       #       OpenStruct.new(body: asset_response.to_json)
+  #       #     )
+  #       #   ECMBlockchain::Asset.create(identity, asset_request)
+  #       # end
+  #     end
 
-      context '422' do
-        let(:error_response) do
-          {
-            code: 422,
-            body: {
-              statusCode: 422,
-              name: 'UnprocessableEntityError',
-              message: 'error message'
-            }
-          }
-        end
+  #     context '422' do
+  #       let(:error_response) do
+  #         {
+  #           code: 422,
+  #           body: {
+  #             statusCode: 422,
+  #             name: 'UnprocessableEntityError',
+  #             message: 'error message'
+  #           }
+  #         }
+  #       end
 
-        before do
-          allow(ECMBlockchain::Asset).to receive(:api_client_call).and_return(error_response)
-        end
+  #       before do
+  #         allow(ECMBlockchain::Asset).to receive(:api_client_call).and_return(error_response)
+  #       end
 
-        it 'should return a UnprocessableEntityError' do
-          asset = ECMBlockchain::Asset.create(identity, asset_request) 
-          expect(asset.success?).to eq(false)
-          expect(asset.error.message).to eq('error message')
-          expect(asset.error.code).to eq(422)
-          expect(asset.error.identifier).to eq('UnprocessableEntityError')
-        end
+  #       it 'should return a UnprocessableEntityError' do
+  #         asset = ECMBlockchain::Asset.create(identity, asset_request) 
+  #         expect(asset.success?).to eq(false)
+  #         expect(asset.error.message).to eq('error message')
+  #         expect(asset.error.code).to eq(422)
+  #         expect(asset.error.identifier).to eq('UnprocessableEntityError')
+  #       end
 
-        it 'should return the error message' do
-          asset = ECMBlockchain::Asset.create(identity, asset_request) 
-          expect{ asset.wrong }.to raise_error(ECMBlockchain::UnprocessableEntityError)
-        end
-      end
-    end
-  end
+  #       it 'should return the error message' do
+  #         asset = ECMBlockchain::Asset.create(identity, asset_request) 
+  #         expect{ asset.wrong }.to raise_error(ECMBlockchain::UnprocessableEntityError)
+  #       end
+  #     end
+  #   end
+  # end
 
   # describe '#retrieve' do
   #   let(:identity) { "user@org1.example.com:s3cr3t!" }

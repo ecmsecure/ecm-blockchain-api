@@ -7,15 +7,14 @@ module ECMBlockchain
       def create(identity, data)
         verify_asset(data)
         asset(request( :post, "/#{identity}#{ASSET_URL}", data ))
-      rescue => error; error
       end
 
-      def batch_create(identity, data)
-        verify_batch_assets(data)
-        request( :post, "/#{identity}#{ASSET_BATCH_URL}", data ). 
-          collect { |asset_response| asset(asset_response) }
-      rescue => error; error
-      end
+      # def batch_create(identity, data)
+      #   verify_batch_assets(data)
+      #   request( :post, "/#{identity}#{ASSET_BATCH_URL}", data ). 
+      #     collect { |asset_response| asset(asset_response) }
+      # rescue => error; error
+      # end
 
       # def retrieve(identity)
       #   response = request( :get, "/#{identity}#{MEMBERS_URL}" )
@@ -37,7 +36,7 @@ module ECMBlockchain
       private 
 
       def asset(asset_data) 
-        ECMBlockchain::AssetModel.new(asset_data)
+        verify_asset(asset_data)
       end
 
       def verify_asset(asset)

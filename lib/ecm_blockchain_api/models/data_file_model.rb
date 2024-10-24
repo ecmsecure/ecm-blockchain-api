@@ -2,18 +2,19 @@ module ECMBlockchain
   class DataFile
     include ActiveModel::Validations
 
-    attr_accessor :title, :base64
-    attr_reader :fileHash, :path, :fileValidated
+    attr_accessor :identifier, :base64, :storage, :digitalSignature
+    attr_reader :fileHash, :href
 
-    validates :title, :base64, presence: true
+    validates :identifier, :base64, presence: true
 
     def initialize(data={})
       data ||= {}
-      @title = data[:title]
+      @identifier = data[:identifier]
       @base64 = data[:base64]
+      @storage = data[:storage]
       @fileHash = data[:fileHash]
-      @path = data[:path]
-      @fileValidated = data[:fileValidated]
+      @href = data[:href]
+      @digitalSignature = ECMBlockchain::DigitalSignature.new(data.fetch(:digitalSignature) {})
     end
 
     def added?

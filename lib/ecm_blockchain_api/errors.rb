@@ -36,7 +36,7 @@ module ECMBlockchain
   class RequestEntityTooLarge < ECMBlockchain::Error; end; 
   class NotFound < ECMBlockchain::Error; end; 
   class NotAcceptable < ECMBlockchain::Error; end; 
-  class UnprocessableEntity < ECMBlockchain::Error; end; 
+  class UnprocessableEntityError < ECMBlockchain::Error; end; 
   class TooManyRequests < ECMBlockchain::Error; end; 
   class ServerError < ECMBlockchain::Error; end; 
   class InternalServerError < ECMBlockchain::Error; end; 
@@ -53,7 +53,7 @@ module ECMBlockchain
     404 => ECMBlockchain::NotFound,
     406 => ECMBlockchain::NotAcceptable,
     413 => ECMBlockchain::RequestEntityTooLarge,
-    422 => ECMBlockchain::UnprocessableEntity,
+    422 => ECMBlockchain::UnprocessableEntityError,
     429 => ECMBlockchain::TooManyRequests,
     500 => ECMBlockchain::InternalServerError,
     502 => ECMBlockchain::BadGateway,

@@ -3,6 +3,8 @@ module ECMBlockchain
     include ActiveModel::Validations
     attr_accessor :data
 
+    validate :empty_data
+
     def initialize(data={})
       data ||= {}
       @data = data.deep_symbolize_keys
@@ -20,6 +22,10 @@ module ECMBlockchain
         self.class.class_eval { attr_accessor name }
         self.instance_variable_set("@#{name}", value)
       end
+    end
+
+    def empty_data
+      errors.add(:base, "Please supply at least one key value pair") unless data.any?
     end
   end
 end

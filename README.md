@@ -56,7 +56,7 @@ ECMBlockchain.base_url = "https://sandbox.ecmsecure.com/v1"
 )
 
 # Retrieve a member by UUID
-member = ECMBlockchain::CA.retrieve("user@org1.example.com:s3cr3t!")
+member = ECMBlockchain::CA.retrieve("user@org1.example.com")
 member.custom_attributes
 
 # Update a member
@@ -69,42 +69,40 @@ ECMBlockchain::CA.delete("user@org1.example.com")
 
 ```ruby
 # Create an Asset on the blockchain
-@member = ECMBlockchain::Asset.create(
-  'creator_identity:secret',
+@asset = ECMBlockchain::Asset.create(
+  'creator_identity',
   {
     uuid: "823737e4-bdc4-401a-b309-ef4c4d4f4733",
     groupId: "contract-bdc4-401a",
     title: "signable contract",
     summary: "updated asset",
+    owner: "owner_identity",
     file: {
-      title: "secure MP4",
-      base64: "data:@file/pdf;base64,JVBERi0xLjQKJdPr6eEKMSAwIG9iago8PC9D..."
+      identifier: "fb77d3e2-03a7-4de0-b571-957dd146edf8",
+      base64: "data:@file/pdf;base64,JVBERi0xLjQKJdPr6eEKMSAwIG9iago8PC9D...",
+      storage: true,
+      digitallySigned: {
+        standard: "simple",
+        signatureType: "certification",
+      } 
     },
     content: {
       unit_type: 'PU',
       unit_id: 'TY23737e4-bdc4-401a-b309-ef4c4d4f4733',
       date_purchased: '10th Jan 2025 09:02:41'
-    },
-    access: [
-      {
-        uuid: "user@org1.example.com",
-        permissions: [
-          {
-            action: "read",
-            name: "verified",
-            value: "true"
-          }
-        ]
-      }
-    ]
+    }
   }
 )
+
+# Retrieve an Asset by UUID
+@asset = ECMBlockchain::Asset.retrieve("823737e4-bdc4-401a-b309-ef4c4d4f4733")
+@asset.title
 ```
 
 ```ruby
 # mint tokens
 @tokens = ECMBlockchain::Tokens.create(
-  'creator_identity:secret',
+  'creator_identity',
   {
     kind: "CarbonCoins",
     quantity: 100
@@ -113,7 +111,7 @@ ECMBlockchain::CA.delete("user@org1.example.com")
 
 # Burn tokens
 @tokens = ECMBlockchain::Tokens.burn(
-  'owner_identity:secret',
+  'owner_identity',
   {
     kind: "CarbonCoins",
     quantity: 100
@@ -123,7 +121,7 @@ ECMBlockchain::CA.delete("user@org1.example.com")
 
 # Retrieve tokens
 @tokens = ECMBlockchain::Tokens.retrieve(
-  'owner_identity:secret',
+  'owner_identity',
   kind # defaults to 'all'
 )
 

@@ -6,73 +6,39 @@ module RequestHelper
       "title": "signable contract",
       "summary": "updated asset",
       "file": {
-        "title": "secure MP4",
+        "identifier": "secure MP4",
         "base64": "data:@file/pdf;base64,JVBERi0xLjQKJdPr6eEKMSAwIG9iago8PC9D..."
       },
       "content": {},
-      "access": [
-        {
-          "uuid": "user@org1.example.com",
-          "permissions": [
-            {
-              "action": "read",
-              "name": "verified",
-              "value": "true"
-            }
-          ]
-        }
-      ]
     }
   end
 
   def asset_response_data
     {
-      title: "string",
-      summary: "string",
-      uuid: "string",
-      txId: "string",
-      groupId: "string",
-      createdBy: "string",
-      file: {
-        title: "string",
-        base64: "string",
-        fileHash: "string",
-        path: "string",
-        fileValidated: true
+      "uuid": "string",
+      "title": "string",
+      "summary": "string",
+      "transactionId": "string",
+      "groupId": "string",
+      "createdBy": "string",
+      "owner": "string",
+      "file": {
+        "identifier": "string",
+        "base64": "string",
+        "fileHash": "string",
+        "storage": true,
+        "digitallySigned": {
+          "standard": "simple",
+          "signatureType": "certification",
+          "cms": "string",
+          "timestamp": "string",
+          "validated": "string"
+        },
+        "href": "string"
       },
-      content: {},
-      access: [
-        {
-          uuid: "string",
-          permissions: [
-            {
-              action: "string",
-              name: "string",
-              value: "string"
-            }
-          ]
-        }
-      ],
-      createdAt: "2023-05-22T13:58:28.487Z",
-      lastInteraction: {
-        timestamp: "2023-05-22T13:58:28.487Z",
-        fileModified: true,
-        interactionFrom: "string"
-      },
-      events: [
-        {
-          txId: "string",
-          value: {
-            summary: "string",
-            interaction: {
-              timestamp: "2023-05-22T13:58:28.487Z",
-              fileModified: true,
-              interactionFrom: "string"
-            }
-          },
-          action: "string"
-        }
-      ]
+      "content": {},
+      "createdAt": "2024-10-11T09:21:14.246Z",
+      "updatedAt": "2024-10-11T09:21:14.246Z"
     }
   end
 
@@ -87,11 +53,21 @@ module RequestHelper
 
   def file_response_data
     {
-      title: "string",
+      identifier: "string",
       base64: "string",
       fileHash: "string",
-      path: "string",
-      fileValidated: true
+      storage: true,
+      href: "string"
+    }
+  end
+
+  def digital_signature_response_data
+    {
+      "standard": "PAdES",
+      "signatureType": "certification",
+      "cms": "string",
+      "timestamp": "string",
+      "validated": "string"
     }
   end
 
@@ -103,18 +79,25 @@ module RequestHelper
     }
   end
 
-  def error_response_object
-      OpenStruct.new(
-        success?: false,
-        body: {
-          error: {
-            message: 'bad request error',
-            statusCode: 400,
-            details: ['error occured']
+  def error_response_data
+    {
+      "error": {
+        "statusCode": 422,
+        "name": "UnprocessableEntityError",
+        "message": "The request body is invalid. See error object `details` property for more info.",
+        "code": "VALIDATION_FAILED",
+        "details": [
+          {
+            "path": "/file/digitallySigned",
+            "code": "required",
+            "message": "must have required property 'signatureType'",
+            "info": {
+              "missingProperty": "signatureType"
+            }
           }
-        }.to_json,
-        code: 400
-      )
+        ]
+      }
+    }
   end
 
   def success_response_object
