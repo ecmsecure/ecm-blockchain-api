@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require_relative "lib/ecm_blockchain_api/version"
+require_relative "lib/ecm-blockchain-api/version"
 
 Gem::Specification.new do |spec|
-  spec.name          = "ecm_blockchain_api"
+  spec.name          = "ecm-blockchain-api"
   spec.version       = ECMBlockchain::VERSION
   spec.authors       = ["Wardy"]
   spec.email         = ["info@ecmsecure.com"]
@@ -14,8 +14,8 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = Gem::Requirement.new(">= 2.4.0")
 
   spec.metadata["homepage_uri"] = spec.homepage
-  spec.metadata["source_code_uri"] = "https://github.com/ecmsecure/ecm_blockchain_api"
-  spec.metadata["changelog_uri"] = "https://github.com/ecmsecure/ecm_blockchain_api/blob/main/CHANGELOG.md"
+  spec.metadata["source_code_uri"] = "https://github.com/ecmsecure/ecm-blockchain-api"
+  spec.metadata["changelog_uri"] = "https://github.com/ecmsecure/ecm-blockchain-api/blob/main/CHANGELOG.md"
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
@@ -28,6 +28,7 @@ Gem::Specification.new do |spec|
 
   # Uncomment to register a new dependency of your gem
   spec.add_dependency "httparty", "~> 0.22.0"
+  spec.add_dependency 'activemodel', '~> 7.0', '>= 7.0.4.3'
 
   spec.add_development_dependency "pry"
   spec.add_development_dependency "webmock"

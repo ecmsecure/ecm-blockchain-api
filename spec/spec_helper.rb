@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "ecm_blockchain_api"
+require "ecm-blockchain-api"
 require 'webmock/rspec'
 require 'factory_bot'
 require 'shoulda-matchers'
