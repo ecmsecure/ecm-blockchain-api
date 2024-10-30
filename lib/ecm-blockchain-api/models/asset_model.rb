@@ -1,4 +1,5 @@
 require 'active_model'
+require 'json'
 
 module ECMBlockchain
   class AssetModel
@@ -13,8 +14,16 @@ module ECMBlockchain
     class << self
       def verify(data={})
         asset = self.new(data)
-        raise ECMBlockchain::UnprocessableEntityError.new(
-          asset.errors.full_messages.first, 422
+        raise ECMBlockchain::Error.raise_error(
+          OpenStruct.new(
+            code: 422, 
+            body: { 
+              error: { 
+                message: asset.errors.full_messages.first,
+                details: ''
+              }
+            }.to_json 
+          )
         ) unless asset.valid?
         asset
       end
@@ -44,7 +53,10 @@ module ECMBlockchain
 
     def data_file_or_content?
       unless file.valid? || content.valid?
-        errors.add(:base, "Please supply either a file object or content object")
+        errors.add(:base, 
+          "file or content error: #{file.errors.full_messages.first || content.errors.full_messages.first ||
+          "Please supply either a file object or content object"}"
+        )
       end
     end
   end

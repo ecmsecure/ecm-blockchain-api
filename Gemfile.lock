@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    ecm_blockchain_api (1.0.1)
+    ecm-blockchain-api (1.1.0)
       activemodel (~> 7.0, >= 7.0.4.3)
       httparty (~> 0.22.0)
 
@@ -112,7 +112,7 @@ PLATFORMS
 DEPENDENCIES
   activemodel (~> 7.0, >= 7.0.4.3)
   activesupport (~> 7.0, >= 7.0.4.3)
-  ecm_blockchain_api!
+  ecm-blockchain-api!
   factory_bot
   faker
   pry
