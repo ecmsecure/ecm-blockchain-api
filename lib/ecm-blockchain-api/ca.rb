@@ -21,6 +21,11 @@ module ECMBlockchain
         OpenStruct.new(success: true, details: "Certificate successfully revoked")
       end
 
+      def crypto_material(identity)
+        response = request( :get, "/#{identity}#{MEMBERS_URL}/crypto")
+        OpenStruct.new(response)
+      end
+
       private
 
       def member(params)
