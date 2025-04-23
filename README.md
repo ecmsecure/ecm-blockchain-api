@@ -7,7 +7,7 @@ Client library to connect and transact with your [ECM Blockchain network](https:
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'ecm_blockchain_api'
+gem 'ecm-blockchain-api'
 ```
 
 And then execute:
@@ -16,7 +16,7 @@ And then execute:
 
 Or install through a CLI with:
 
-    $ gem install ecm_blockchain_api
+    $ gem install ecm-blockchain-api
 
 ## Usage
 Configure the library by initializing it with your access token.

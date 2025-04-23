@@ -1,0 +1,13 @@
+services:
+  ecm-blockchain-api:
+    build: .
+    volumes:
+      - .:/gem
+    tty: true
+    stdin_open: true
+    networks:
+      - ecmnet
+networks:
+  ecmnet:
+    name: ecmnet
+    external: true
