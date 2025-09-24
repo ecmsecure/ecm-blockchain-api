@@ -10,9 +10,9 @@ require "ecm-blockchain-api"
 # (If you use this, don't forget to add pry to your Gemfile!)
 # require "pry"
 # Pry.start
-ECMBlockchain.base_url = "http://ecm-app:3000/v1"
+ECMBlockchain.base_url = ""
 # ECMBlockchain.access_token = ""
-ECMBlockchain.access_token = "3-s1gn2k!"
+ECMBlockchain.access_token = ""
 
 require "pry"
 Pry.start

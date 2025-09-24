@@ -64,7 +64,7 @@ custom_attributes = [{ name: "verified", value: "false" }]
 ECMBlockchain::CA.update(identity, custom_attributes)
 
 # Delete a member
-ECMBlockchain::CA.delete("user@org1.example.com")
+ECMBlockchain::CA.revoke("user@org1.example.com")
 ```
 
 ```ruby
