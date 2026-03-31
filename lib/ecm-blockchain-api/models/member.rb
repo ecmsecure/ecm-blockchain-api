@@ -4,7 +4,7 @@ module ECMBlockchain
   class Member
     include ActiveModel::Validations
 
-    attr_accessor :uuid, :organisation, :custom_attributes, :certificate
+    attr_accessor :uuid, :organisation, :reference, :certificate
 
     validates :uuid, presence: true
     validates :organisation, :certificate, presence: true
@@ -13,9 +13,7 @@ module ECMBlockchain
       @uuid = data.fetch(:uuid)
       @organisation = data.fetch(:organisation)
       @certificate = data.fetch(:certificate)
-      @custom_attributes = data[:customAttributes].map do |attr|
-        ECMBlockchain::CustomAttribute.new(attr)
-      end
+      @reference = data.fetch(:reference, nil)
     end
   end
 end

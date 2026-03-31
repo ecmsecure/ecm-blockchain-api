@@ -82,6 +82,82 @@ RSpec.describe ECMBlockchain::Asset do
     end
   end
 
+  describe '#timestamp' do
+    let(:identity) { "user@org1.example.com" }
+    let(:timestamp_request) do
+      {
+        "identifier": "secure MP4",
+        "base64": "data:@file/pdf;base64,JVBERi0xLjQKJdPr6eEKMSAwIG9iago8PC9D..."
+      }
+    end
+
+    before do
+      stub_request(:put, ECMBlockchain.base_url + "/#{identity}#{assets_url}/document_timestamp")
+    end
+    
+    context 'timestamp created' do
+      context '200 - with data' do
+        before do
+          allow(ECMBlockchain::Asset).to receive(:request).and_return(asset_response)
+        end
+
+        it 'should update a timestamp' do
+          asset = ECMBlockchain::Asset.timestamp(identity, timestamp_request)
+          expect(asset.uuid).to eq(asset_response[:uuid])
+        end
+
+        it 'should return an success on an asset' do
+          asset = ECMBlockchain::Asset.timestamp(identity, timestamp_request)
+          expect(asset).to be_a(ECMBlockchain::AssetModel)
+        end
+
+        it 'should call the request method with the correct params' do
+          expect(ECMBlockchain::Asset).to receive(:request)
+            .with( :patch, "/#{identity}#{assets_url}/document_timestamp", timestamp_request )
+            .and_return(
+              asset_response
+            )
+          ECMBlockchain::Asset.timestamp(identity, timestamp_request)
+        end
+      end
+
+      context '422' do
+        let(:error_response) do
+          error_response_data
+        end
+
+        before do
+          error = instance_double(HTTParty::Response, body: error_response.to_json, code: 422, success?: false)
+          allow(ECMBlockchain::Asset).to receive(:api_client_call).and_return(error)
+        end
+
+        it 'should raise an UnprocessableEntity' do
+          expect { ECMBlockchain::Asset.timestamp(identity, timestamp_request) }
+            .to raise_error(ECMBlockchain::UnprocessableEntityError)
+        end
+
+        it 'should return the error message' do
+          begin
+            ECMBlockchain::Asset.create(identity, asset_request) 
+          rescue ECMBlockchain::UnprocessableEntityError => e
+            expect(e.message).to eq(
+              'The request body is invalid. See error object `details` property for more info.'
+            )
+            expect(e.code).to eq(422)
+          end
+        end
+
+        xit 'should raise an error if the response data is invalid' do
+          allow(ECMBlockchain::Asset).to receive(:api_client_call).and_return(
+            instance_double(HTTParty::Response, body: '{}', code: 200, success?: true)
+          )
+          expect { ECMBlockchain::Asset.create(identity, asset_request) }.to raise_error(ECMBlockchain::UnprocessableEntityError)
+        end
+
+      end
+    end
+  end
+
   # describe '#batch_create' do
   #   let(:identity) { "user@org1.example.com:s3cr3t!" }
     

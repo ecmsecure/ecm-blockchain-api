@@ -1,5 +1,6 @@
 require 'active_model'
 require 'json'
+require 'ostruct'
 
 module ECMBlockchain
   class AssetModel

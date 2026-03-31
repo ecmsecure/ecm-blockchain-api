@@ -1,3 +1,5 @@
+require 'ostruct'
+
 module ECMBlockchain
   class DataFile
     include ActiveModel::Validations
@@ -6,6 +8,24 @@ module ECMBlockchain
     attr_reader :fileHash, :href
 
     validates :identifier, :base64, presence: true
+
+    class << self
+      def verify(data={})
+        file = self.new(data)
+        raise ECMBlockchain::Error.raise_error(
+          OpenStruct.new(
+            code: 422, 
+            body: { 
+              error: { 
+                message: file.errors.full_messages.first,
+                details: ''
+              }
+            }.to_json 
+          )
+        ) unless file.valid?
+        file
+      end
+    end
 
     def initialize(data={})
       data ||= {}

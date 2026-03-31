@@ -9,6 +9,11 @@ module ECMBlockchain
         asset(request( :post, "/#{identity}#{ASSET_URL}", data ))
       end
 
+      def timestamp(identity, data)
+        verify_file(data)
+        asset(request( :patch, "/#{identity}#{ASSET_URL}/document_timestamp", data ))
+      end
+
       # def batch_create(identity, data)
       #   verify_batch_assets(data)
       #   request( :post, "/#{identity}#{ASSET_BATCH_URL}", data ). 
@@ -41,6 +46,10 @@ module ECMBlockchain
 
       def verify_asset(asset)
         ECMBlockchain::AssetModel.verify(asset) 
+      end
+
+      def verify_file(file)
+        ECMBlockchain::DataFile.verify(file) 
       end
 
       def verify_batch_assets(arr)
